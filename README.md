@@ -2,6 +2,8 @@
 
 The COTL Light Collector is a Python-based automation tool designed to assist players in the game "Sky: Children of the Light" by automating the process of collecting lights. It uses `pyautogui` for GUI automation to interact with the game, simulating mouse clicks and keyboard presses to efficiently collect lights.
 
+https://github.com/GalexY727/cotl-light-collector/assets/65139378/18a73f29-18bf-4f80-affb-c2e2c6a0f974
+
 ## Features
 
 - **Automated Light Collection**: Automatically locates and collects lights within the game, reducing the manual effort required.
