@@ -14,9 +14,19 @@ current_page = 0
 
 friend_count = 0
 
+using_zenbook = True
+path = './media/zenbook/' if using_zenbook else './media/desktop/'
+
+screen_width, screen_height = pyautogui.size()
+
+def pick_region(region1, region2):
+    return region1 if screen_width <= 1920 else region2
+    
+
 def press_key(key):
     try:
-        pyautogui.locateOnScreen('./media/esc.png', grayscale=1, region=(1765, 1026, 120, 50), confidence=.7)
+        region = pick_region((1765, 1026, 120, 50), (2610, 1700, 200, 100))
+        pyautogui.locateOnScreen(path+'esc.png', grayscale=1, region=region, confidence=.7)
         ahk.key_down(key)
         time.sleep(.1)
         ahk.key_up(key)
@@ -27,7 +37,7 @@ def press_key(key):
 
 def attempt_reentry():
     try:
-        pyautogui.locateOnScreen('./media/const.png', grayscale=1, confidence=0.6)
+        pyautogui.locateOnScreen(path+'const.png', grayscale=1, confidence=0.6)
         key = 'f'
         ahk.key_down(key)
         time.sleep(.1)
@@ -41,7 +51,7 @@ def enter_ui():
         return
     
     for _ in range(7):
-        pyautogui.scroll(100)
+        pyautogui.scroll(25)
         pyautogui.moveTo(pyautogui.size()[0]/2, pyautogui.size()[1])
     
     attempts = 50
@@ -57,10 +67,13 @@ def enter_ui():
 
 def index_to_start():
     try:
-        pyautogui.locateOnScreen('./media/add_friends.png', grayscale=1, confidence=confidence)
+        pyautogui.locateOnScreen(path+'add_friends.png', grayscale=1, confidence=confidence)
         return
     except:
-        ahk.key_press('z')
+        key = 'z'
+        ahk.key_down(key)
+        time.sleep(.1)
+        ahk.key_up(key)
         index_to_start()
 
 def make_unique_list(list, pixel_distance=3):
@@ -76,16 +89,17 @@ def make_unique_list(list, pixel_distance=3):
 
 # run AFTER we index or else everything explodes
 def get_total_pages():
-    left, top, width, height = pyautogui.locateOnScreen('./media/add_friends.png', grayscale=1, confidence=confidence)
+    left, top, width, height = pyautogui.locateOnScreen(path+'add_friends.png', grayscale=1, confidence=confidence)
     screen_width, screen_height = pyautogui.size()
+    region=(left, top+height, int(screen_width*0.12), screen_height-(top+height))
     try:
-        positions = pyautogui.locateAllOnScreen('./media/page_bubble_online.png', grayscale=0, region=(left, top+height, 220, screen_height-(top+height)), confidence=confidence)
+        positions = pyautogui.locateAllOnScreen(path+'page_bubble_online.png', grayscale=0, region=region, confidence=confidence)
         pages_online = positions
     except:
         pages_online = 0
         print("No online")
     try:
-        positions = pyautogui.locateAllOnScreen('./media/page_bubble.png', grayscale=0, region=(left, top+height, 220, screen_height-(top+height)), confidence=confidence)
+        positions = pyautogui.locateAllOnScreen(path+'page_bubble.png', grayscale=0, region=region, confidence=confidence)
         pages_offline = positions
     except:
         pages_offline = 0
@@ -95,27 +109,56 @@ def get_total_pages():
 def get_friends_on_current_page():
     pyautogui.moveTo(500, 0)
     try:
-        return list(pyautogui.locateAllOnScreen('./media/unlit_friend.png', grayscale=1, region=(190, 160, 1691, 948), confidence=confidence))
+        region = pick_region((190, 160, 1691, 948), (250, 200, 2300, 1360))
+        return list(pyautogui.locateAllOnScreen(path+'unlit_friend.png', grayscale=1, region=region, confidence=confidence))
     except:
-        return [] 
+        return []
+    
+def wait_for_candle(duration):
+    start_time = time.time()
+    while time.time() - start_time < duration:
+        # Considering the search takes .24 seconds, 
+        # if we have less than .24 seconds left, 
+        # we should just wait it out
+        if duration-(time.time() - start_time) < 0.24:
+            time.sleep(duration-(time.time() - start_time))
+        try:
+            region = pick_region((0,0,0,0), (840, 0, 1087, 1800))
+            pyautogui.locateOnScreen(path+'candle.png', grayscale=1, region=region, confidence=.6)
+            time.sleep(.1)
+            return 1
+        except:
+            pass
+    return 0
 
-def lightFriend(x, y):
+def light_friend(x, y):
     pyautogui.click(x, y)
-    time.sleep(.3) # we need this bc the q kinda stays there for a bit
+    
+    time.sleep(.3)
+
+    skip = 0
     try:
-        q_position = pyautogui.locateOnScreen('./media/q_info.png', grayscale=1, region=(1540, 1025, 30, 30), confidence=confidence)
+        region = pick_region((1540, 1025, 30, 30), (2192, 1701, 60, 60))
+        q_position = pyautogui.locateOnScreen(path+'q_info.png', grayscale=1, region=region, confidence=confidence)
+        # we still arent in the UI-- we need to click again
         pyautogui.click(x, y)
         pyautogui.moveTo(q_position)
         time.sleep(.2)
     except:
+        # We couldn't find the info page, so let's make sure we didn't misclick
         try:
-            pyautogui.locateOnScreen('./media/esc.png', grayscale=1, confidence=0.6)
+            skip = pyautogui.locateOnScreen(path+'candle.png', grayscale=1, confidence=0.6)
         except:
-            enter_ui()
-            return
-    time.sleep(.9)
+            try:
+                pyautogui.locateOnScreen(path+'esc.png', grayscale=1, confidence=0.6)
+            except:
+                enter_ui()
+                return
+    if not skip:
+        wait_for_candle(.9)
+    
     press_key('f')
-    time.sleep(.3)
+    time.sleep(.2)
     press_key('esc')
     time.sleep(.3)
     global friend_count
@@ -131,7 +174,7 @@ def loop():
                 break
             for friend in friends:
                 x, y = pyautogui.center(friend)
-                lightFriend(x, y)
+                light_friend(x, y)
         press_key('c')
         time.sleep(page_transition_time)
         current_page += 1
@@ -141,11 +184,12 @@ if __name__ == "__main__":
     start_time = time.time()
     time.sleep(1)
     try:
-        pyautogui.locateOnScreen('./media/esc.png', grayscale=1, confidence=0.6)
+        pyautogui.locateOnScreen(path+'esc.png', grayscale=1, confidence=0.6)
     except:
         enter_ui()
     index_to_start()
     total_pages = get_total_pages()
+    print(f"Total pages: {total_pages}")
     loop()
     end_time = time.time()
     elapsed_time = end_time - start_time
