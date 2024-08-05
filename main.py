@@ -15,13 +15,13 @@ current_page = 0
 friend_count = 0
 light_collected = 0
 
-using_zenbook = True
-path = './media/zenbook/' if using_zenbook else './media/desktop/'
-
 screen_width, screen_height = pyautogui.size()
 
+using_zenbook = screen_width > 1920
+path = './media/zenbook/' if using_zenbook else './media/desktop/'
+
 def pick_region(region1, region2):
-    return region1 if screen_width <= 1920 else region2
+    return region1 if not using_zenbook else region2
 
 def press_key(key):
     try:
