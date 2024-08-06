@@ -200,7 +200,6 @@ def light_friend(x, y):
     friend_count += 1
 
 def loop():
-    press_key('c')
     global current_page, light_collected
     while current_page <= total_pages:
         # this loop helps double check missed friends
@@ -231,6 +230,8 @@ if __name__ == "__main__":
     index_to_start()
     total_pages = get_total_pages()
     print(f"Total pages: {total_pages}")
+    press_key('c')
+    time.sleep(page_transition_time)
     loop()
     end_time = time.time()
     elapsed_time = end_time - start_time
