@@ -20,9 +20,40 @@ def press_key(key):
         ahk.key_down(key)
         time.sleep(.1)
         ahk.key_up(key)
+        return 1
     except:
         print("Esc not found")
+        return 0
+
+def attempt_reentry():
+    try:
+        pyautogui.locateOnScreen('./media/const.png', grayscale=1, confidence=0.6)
+        key = 'f'
+        ahk.key_down(key)
+        time.sleep(.1)
+        ahk.key_up(key)
+        return 1
+    except:
+        return 0
+
+def enter_ui():
+    if attempt_reentry():
+        return
+    
+    for _ in range(7):
+        pyautogui.scroll(100)
+        pyautogui.moveTo(pyautogui.size()[0]/2, pyautogui.size()[1])
+    
+    attempts = 50
+    
+    while attempts > 0:
+        if (attempt_reentry()):
+            break
+        attempts -= 1
+        pyautogui.moveTo(1591, 932)
         pass
+    time.sleep(3)
+
 
 def index_to_start():
     try:
@@ -70,16 +101,19 @@ def get_friends_on_current_page():
 
 def lightFriend(x, y):
     pyautogui.click(x, y)
-    time.sleep(.5) # we need this bc the q kinda stays there for a bit
+    time.sleep(.3) # we need this bc the q kinda stays there for a bit
     try:
         q_position = pyautogui.locateOnScreen('./media/q_info.png', grayscale=1, region=(1540, 1025, 30, 30), confidence=confidence)
-        print("Double clicking")
         pyautogui.click(x, y)
         pyautogui.moveTo(q_position)
+        time.sleep(.2)
     except:
-        pass
+        try:
+            pyautogui.locateOnScreen('./media/esc.png', grayscale=1, confidence=0.6)
+        except:
+            enter_ui()
+            return
     time.sleep(.9)
-    print("Hitting f")
     press_key('f')
     time.sleep(.3)
     press_key('esc')
@@ -104,10 +138,15 @@ def loop():
 
 if __name__ == "__main__":
     print("Starting!!")
+    start_time = time.time()
     time.sleep(1)
+    try:
+        pyautogui.locateOnScreen('./media/esc.png', grayscale=1, confidence=0.6)
+    except:
+        enter_ui()
     index_to_start()
-    print("Indexed")
     total_pages = get_total_pages()
-    print(f"Total pages: {total_pages}")
     loop()
-    print(f"Lit {friend_count} friends")
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"Lit {friend_count} friends in {int(elapsed_time)} seconds")
