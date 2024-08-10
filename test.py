@@ -3,7 +3,6 @@ import keyboard
 import time
 import os
 from ahk import AHK
-import json
 
 ahk = AHK()
 
@@ -70,50 +69,74 @@ def find_all(image):
         return []
     
 def get_flare_stars():
-    with open('config.json') as f:
-        config = json.load(f)
-    
-    positions = make_unique_list(find_all(config['flare_image']), pixel_distance=config['pixel_distance'])
+    positions = make_unique_list(find_all('flare'), pixel_distance=10)
     star_positions = []
-    
+    # find groupings of flares that are within 100 px of eachother
+    # a group of 3 or more is a star
+    # get the center of the star and add that position to a list
     for position in positions:
         x, y = pyautogui.center(position)
         flare_group = []
-        
         for otro_star in positions:
             x2, y2 = pyautogui.center(otro_star)
             hypot = ((x - x2)**2 + (y - y2)**2)**.5
-            
-            if hypot < config['flare_group_distance']:
+            if hypot < 120:
                 flare_group.append(otro_star)
-        
-        if len(flare_group) > config['flare_group_size']:
+        if len(flare_group) > 1:
             centerpoint = (0, 0)
-            
             for flare_pos in flare_group:
                 centerpoint = (centerpoint[0] + flare_pos[0], centerpoint[1] + flare_pos[1])
-            
             centerpoint = (centerpoint[0] / len(flare_group), centerpoint[1] / len(flare_group))
             star_positions.append(centerpoint)
-    
-    flare_centers = make_unique_list(star_positions, pixel_distance=config['flare_center_distance'])
-    lit_star_locations = make_unique_list(find_all(config['lit_friend_image']), pixel_distance=config['lit_star_distance'])
+    flare_centers = make_unique_list(star_positions, pixel_distance=20)
+    lit_star_locations = make_unique_list(find_all('lit_friend'), pixel_distance=10)
     final_star_positions = []
-    
     for star in flare_centers:
-        closest = config['closest_distance']
+        # find closest lit star to this star
+        closest = 200
         closest_star = None
-        
         for lit_star in lit_star_locations:
             distance = ((star[0] - lit_star[0])**2 + (star[1] - lit_star[1])**2)**.5
-            
             if distance < closest:
                 closest = distance
                 closest_star = lit_star
-        
         final_star_positions.append(closest_star)
-    
     return final_star_positions
+
+def find_flare_stars():
+    # go inside path./lit_friends/* and go through all pictures in that folder
+    # and match with one screenshot of the screen
+    # return a list of unique positions (50px) of all results
+    results = []
+    for picture in os.listdir(path+'lit_friends'):
+        # temp screenshot 
+        pyautogui.screenshot('temp.png')
+        try:
+            region = pick_region((190, 160, 1691, 948), (250, 200, 2300, 1360))
+            positions = list(pyautogui.locateAll(needleImage=(path+'lit_friends/'+picture), haystackImage='./temp.png', grayscale=1, region=region, confidence=.9))
+            for position in positions:
+                x, y = pyautogui.center(position)
+                results.append((x, y))
+        except:
+            pass
+        # delete temp screenshot
+        os.remove('temp.png')
+    
+    return make_unique_list(results, pixel_distance=50)
+
+def confidences():
+    for i in range(4, 10):
+        conf = i/100 + .9
+        for picture in os.listdir(path+'lit_friends'):
+            # temp screenshot 
+            pyautogui.screenshot('temp.png')
+            length = []
+            region = pick_region((190, 160, 1691, 948), (250, 200, 2300, 1360))
+            positions = list(pyautogui.locateAll(needleImage=(path+'lit_friends/'+picture), haystackImage='./temp.png', grayscale=1, region=region, confidence=conf))
+            for position in positions:
+                x, y = pyautogui.center(position)
+                length.append((x, y))
+            print(str(len(length)) + ' found with confidence ' + str(conf))
 
 if __name__ == '__main__':
     time.sleep(.5)
