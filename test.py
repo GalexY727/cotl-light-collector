@@ -28,8 +28,8 @@ def timer():
         region = (840, 0, 1087, 1800)
         pyautogui.locateOnScreen('./media/zenbook/candle.png', grayscale=1, region=region, confidence=.6)
         print("Found")
-    except:
-        pass
+    except Exception as e:
+        print("Error occurred:", str(e))
     print("--- %s seconds ---" % (time.time() - start_time))
 
 def ss():
@@ -140,9 +140,4 @@ def confidences():
 
 if __name__ == '__main__':
     time.sleep(.5)
-    arr = get_flare_stars()
-    for pos in arr:
-        pyautogui.moveTo(pos)
-        time.sleep(.1)
-    print(len(arr))
-    # confidences()
+    timer()
