@@ -13,15 +13,15 @@ total_pages = -1
 current_page = 0
 
 friend_count = 0
-
-using_zenbook = True
-path = './media/zenbook/' if using_zenbook else './media/desktop/'
+light_collected = 0
 
 screen_width, screen_height = pyautogui.size()
 
+using_zenbook = screen_width > 1920
+path = './media/zenbook/' if using_zenbook else './media/desktop/'
+
 def pick_region(region1, region2):
-    return region1 if screen_width <= 1920 else region2
-    
+    return region1 if not using_zenbook else region2
 
 def press_key(key):
     try:
@@ -106,14 +106,66 @@ def get_total_pages():
         print("No offline")
     return len(make_unique_list(list(pages_online) + list(pages_offline)))
 
-def get_friends_on_current_page():
+def find_all(image):
     pyautogui.moveTo(500, 0)
     try:
         region = pick_region((190, 160, 1691, 948), (250, 200, 2300, 1360))
-        return list(pyautogui.locateAllOnScreen(path+'unlit_friend.png', grayscale=1, region=region, confidence=confidence))
+        return list(pyautogui.locateAllOnScreen(path+image+'.png', grayscale=1, region=region, confidence=confidence))
     except:
         return []
     
+def get_flare_stars():
+    positions = make_unique_list(find_all('flare'), pixel_distance=10)
+    star_positions = []
+    # find groupings of flares that are within 100 px of eachother
+    # a group of 3 or more is a star
+    # get the center of the star and add that position to a list
+    for position in positions:
+        x, y = pyautogui.center(position)
+        flare_group = []
+        for otro_star in positions:
+            x2, y2 = pyautogui.center(otro_star)
+            hypot = ((x - x2)**2 + (y - y2)**2)**.5
+            if hypot < 120:
+                flare_group.append(otro_star)
+        if len(flare_group) > 1:
+            centerpoint = (0, 0)
+            for flare_pos in flare_group:
+                centerpoint = (centerpoint[0] + flare_pos[0], centerpoint[1] + flare_pos[1])
+            centerpoint = (centerpoint[0] / len(flare_group), centerpoint[1] / len(flare_group))
+            star_positions.append(centerpoint)
+    flare_centers = make_unique_list(star_positions, pixel_distance=20)
+    lit_star_locations = make_unique_list(find_all('lit_friend'), pixel_distance=10)
+    final_star_positions = []
+    for star in flare_centers:
+        # find closest lit star to this star
+        closest = 9999
+        closest_star = None
+        for lit_star in lit_star_locations:
+            distance = ((star[0] - lit_star[0])**2 + (star[1] - lit_star[1])**2)**.5
+            if distance < closest:
+                closest = distance
+                closest_star = lit_star
+        final_star_positions.append(closest_star)
+    return final_star_positions
+    
+def wait_for_candle(duration):
+    start_time = time.time()
+    while time.time() - start_time < duration:
+        # Considering the search takes .24 seconds, 
+        # if we have less than .24 seconds left, 
+        # we should just wait it out
+        if duration-(time.time() - start_time) < 0.24:
+            time.sleep(duration-(time.time() - start_time))
+        try:
+            region = pick_region((0,0,0,0), (840, 0, 1087, 1800))
+            pyautogui.locateOnScreen(path+'candle.png', grayscale=1, region=region, confidence=.6)
+            time.sleep(.1)
+            return 1
+        except:
+            pass
+    return 0
+
 def light_friend(x, y):
     pyautogui.click(x, y)
     
@@ -148,18 +200,23 @@ def light_friend(x, y):
     friend_count += 1
 
 def loop():
-    global current_page
+    global current_page, light_collected
     while current_page <= total_pages:
         # this loop helps double check missed friends
         while True:
-            friends = make_unique_list(get_friends_on_current_page(), pixel_distance=10)
+            friends = make_unique_list(find_all('unlit_friend'), pixel_distance=10)
             if len(friends) == 0:
+                for star in get_flare_stars():
+                    pyautogui.click(star)
+                    light_collected += 1
+                    time.sleep(.1)
                 break
             for friend in friends:
                 x, y = pyautogui.center(friend)
                 light_friend(x, y)
         press_key('c')
         time.sleep(page_transition_time)
+        pyautogui.moveTo(501, 0)
         current_page += 1
 
 if __name__ == "__main__":
@@ -173,7 +230,9 @@ if __name__ == "__main__":
     index_to_start()
     total_pages = get_total_pages()
     print(f"Total pages: {total_pages}")
+    press_key('c')
+    time.sleep(page_transition_time)
     loop()
     end_time = time.time()
     elapsed_time = end_time - start_time
-    print(f"Lit {friend_count} friends in {int(elapsed_time)} seconds")
+    print(f"Lit {friend_count} friends, and collected {light_collected} light in {int(elapsed_time)} seconds")
