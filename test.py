@@ -8,10 +8,10 @@ from ahk import AHK
 
 ahk = AHK()
 
-page_transition_time = 0.86
+page_transition_time = 0.92
 confidence = 0.9
 
-total_pages = -1
+total_pages = 10
 current_page = 0
 
 friend_count = 0
@@ -71,9 +71,12 @@ def cv_find_all(needlePath, haystackPath='./cache/cv_find_all_cache.png', confid
         needleImage = cv2.imread(path+needlePath+'.png')
 
     # check if the haystack is a real file
+    if haystackPath is None:
+        haystackPath = './cache/cv_find_all_cache.png'
     if haystackPath == './cache/cv_find_all_cache.png':
         # take temporary screenshot and assign it to haystack
-        haystackImage = pyautogui.screenshot(haystackPath)
+        pyautogui.screenshot(haystackPath)
+        haystackImage = cv2.imread(haystackPath)
     else:
         try:
             haystackImage = cv2.imread(haystackPath)
@@ -92,9 +95,9 @@ def cv_find_all(needlePath, haystackPath='./cache/cv_find_all_cache.png', confid
     friendlyArray = list((item[0] + needleImage.shape[0]//2, item[1] + needleImage.shape[0]//2) for item in friendlyArray)
     return friendlyArray
     
-def find_flare_stars(testImagePath):
+def find_flare_stars(testImagePath=None):
     # Look for stars, then look for a group of 2 or more flares within 100 px of the star's center
-    lit_star_locations = cv_find_all('lit_friend', testImagePath)
+    lit_star_locations = cv_find_all('unlit_friend', testImagePath)
     print("Found lit stars:", len(lit_star_locations))
     flare_positions = cv_find_all('flare', testImagePath)
     print("Found flares:", len(flare_positions))
@@ -106,24 +109,38 @@ def find_flare_stars(testImagePath):
         for flare in flare_positions:
             flare_x, flare_y = flare[0], flare[1]
             hypot = ((star_x - flare_x)**2 + (star_y - flare_y)**2)**.5
-            if hypot < 120:
+            if hypot < 70:
                 flare_group.append(flare)
         if len(flare_group) > 1:
             flared_star_positions.append((star_x, star_y))
     return flared_star_positions
 
+def loop():
+    global current_page, total_pages
+    while current_page <= total_pages:
+        testImagePath = './cache/' + str(current_page) + '.png'
+        pyautogui.screenshot(testImagePath)
+        testImage = cv2.imread(testImagePath)
+        # this loop helps double check missed friends
+        while True:
+            for i in range(2):
+                for star in find_flare_stars(testImagePath=testImagePath):
+                    cv2.circle(testImage, (int(star[0]), int(star[1])), 40, (255, 0, 255), 5)
+            # move mouse out of way becuase we were clicking
+            pyautogui.moveTo(500, 0)
+            friends = cv_find_all('unlit_friend', haystackPath=testImagePath)
+            for friend in friends:
+                cv2.circle(testImage, (int(friend[0]), int(friend[1])), 12, (0, 255, 0), 2)
+            break
+        key = 'c'
+        ahk.key_down(key)
+        time.sleep(.1)
+        ahk.key_up(key)
+        time.sleep(page_transition_time)
+        pyautogui.moveTo(501, 0)
+        current_page += 1
+        cv2.imwrite(testImagePath, testImage)
+
 if __name__ == '__main__':
     time.sleep(.5)
-    testImagePath = 'image1.png'
-    testImage = cv2.imread(testImagePath)
-    flared_positions = find_flare_stars(testImagePath)
-    for star in flared_positions:
-        cv2.circle(testImage, (int(star[0]), int(star[1])), 40, (255, 0, 255), 4)
-
-    for pos in cv_find_all('lit_friend', testImagePath):
-        cv2.circle(testImage, (int(pos[0]), int(pos[1])), 15, (0, 255, 0), 4)
-
-    for pos in cv_find_all('flare', testImagePath):
-        cv2.circle(testImage, (int(pos[0]), int(pos[1])), 7, (255, 255, 0), 2)
-
-    cv2.imwrite('matches_output.png', testImage)
+    loop()
