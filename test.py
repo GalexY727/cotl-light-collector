@@ -115,6 +115,7 @@ def cv_find_all(needlePath, haystackPath='./cache/cv_find_all_cache.png', confid
     return friendlyArray
     
 def find_flare_stars(testImagePath=None):
+    # Look for stars, then look for a group of 2 or more flares within 100 px of the star's center
     lit_star_locations = cv_find_all('lit_friend', testImagePath)
     unlit_star_locations = cv_find_all('unlit_friend', testImagePath)
     flare_positions = cv_find_all('flare', testImagePath)
@@ -130,35 +131,7 @@ def find_flare_stars(testImagePath=None):
                 flare_group.append(flare)
         if len(flare_group) > 1:
             flared_star_positions.append((star_x, star_y))
-    
-    # Perform histogram analysis on flared star positions
-    flared_star_positions = perform_histogram_analysis(flared_star_positions, testImagePath)
-    
     return flared_star_positions
-
-def perform_histogram_analysis(flared_star_positions, testImagePath):
-    # Load the test image
-    testImage = cv2.imread(testImagePath)
-    
-    # Convert the image to grayscale
-    grayImage = cv2.cvtColor(testImage, cv2.COLOR_BGR2GRAY)
-    
-    # Calculate the histogram of the grayscale image
-    hist = cv2.calcHist([grayImage], [0], None, [256], [0, 256])
-    
-    # Find the peak values in the histogram
-    peaks, _ = find_peaks(hist.flatten(), distance=10)
-    
-    # Filter the flared star positions based on the peak values
-    filtered_positions = []
-    for star in flared_star_positions:
-        star_x, star_y = star[0], star[1]
-        pixel_value = grayImage[star_y, star_x]
-        if pixel_value in peaks:
-            filtered_positions.append((star_x, star_y))
-    
-    return filtered_positions
-
 
 def loop():
     global current_page, total_pages
