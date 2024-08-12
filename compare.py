@@ -7,10 +7,9 @@ def compare_templates(template, image, method=cv2.TM_CCOEFF_NORMED, threshold=0.
     result = cv2.matchTemplate(image, template, method)
     _, max_val, _, max_loc = cv2.minMaxLoc(result)
     locations = np.where(result >= threshold)
-    print(locations)
     return locations
 
-def find_occurrences(image_path, template_directory, threshold=0.8):
+def find_occurrences(image_path, template_directory, threshold=.8):
     # Load the image where occurrences are to be found
     image = cv2.imread(image_path)
     if image is None:
@@ -28,20 +27,24 @@ def find_occurrences(image_path, template_directory, threshold=0.8):
                 print(f"Failed to load template {template_path}")
                 continue
             
-            for loc in compare_templates(template, image, threshold=threshold):
-                matches.append((loc.x, loc.y, threshold))
+            loc = compare_templates(template, image, threshold=threshold)
     
     # Highlight matches on the image (for visualization)
-    for (x, y, score) in matches:
+    for loc_x, loc_y in zip(loc[1][::-1], loc[0][::-1]):
+        x, y = loc_x, loc_y
         template_width, template_height = template.shape[1], template.shape[0]
-        cv2.rectangle(image, (x, y), (x + template_width, y + template_height), (10, 171, 255), 2)
-    
+        cv2.rectangle(image, (x, y), (x + template_width, y + template_height), (255, 171, 10), 2)
     # Save or display the result
-    cv2.imwrite("matches_output.png", image)
-    print(f"Found {len(matches)} matches. Results saved to matches_output.png")
+    print(f"Found {len(loc[0])} matches. Results saved to matches_output.png")
+    return (len(loc[0]), image)
 
 # Example usage
-image_path = "image1.png"
+image_path = "image2.png"
 template_directory = "./media/zenbook/lit_friends"  # Replace with the path to your template directory
 
-find_occurrences(image_path, template_directory)
+
+if __name__ == "__main__":
+    for i in range(10, 20):
+        occurances, image = find_occurrences(image_path, template_directory, threshold=.8+i/100)
+        if occurances < 3 and occurances > 0:
+            cv2.imwrite("matches_output.png", image)

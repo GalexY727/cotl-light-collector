@@ -2,6 +2,8 @@ import pyautogui
 import keyboard
 import time
 import os
+import cv2
+import numpy as np
 from ahk import AHK
 
 ahk = AHK()
@@ -14,13 +16,13 @@ current_page = 0
 
 friend_count = 0
 
-using_zenbook = True
-path = './media/zenbook/' if using_zenbook else './media/desktop/'
-
 screen_width, screen_height = pyautogui.size()
 
+using_zenbook = screen_width > 1920
+path = './media/zenbook/' if using_zenbook else './media/desktop/'
+
 def pick_region(region1, region2):
-    return region1 if screen_width <= 1920 else region2
+    return region1 if not using_zenbook else region2
 
 def timer():
     start_time = time.time()
@@ -68,17 +70,23 @@ def find_all(image):
     except:
         return []
     
-def get_flare_stars():
-    positions = make_unique_list(find_all('flare'), pixel_distance=10)
+def find_all_cv(needle, haystack, threshold=0.9):
+    result = cv2.matchTemplate(haystack, path+needle+'.png', cv2.TM_CCOEFF_NORMED)
+    loc = np.where(result >= threshold)
+    return list(zip(*loc[::-1]))
+
+
+def get_flare_stars(image):
+    positions = make_unique_list(find_all_cv('flare', image), pixel_distance=10)
     star_positions = []
-    # find groupings of flares that are within 100 px of eachother
+    # find groupings of flares that are within 100 px of each other
     # a group of 3 or more is a star
     # get the center of the star and add that position to a list
     for position in positions:
-        x, y = pyautogui.center(position)
+        x, y = position
         flare_group = []
         for otro_star in positions:
-            x2, y2 = pyautogui.center(otro_star)
+            x2, y2 = otro_star
             hypot = ((x - x2)**2 + (y - y2)**2)**.5
             if hypot < 120:
                 flare_group.append(otro_star)
@@ -103,41 +111,56 @@ def get_flare_stars():
         final_star_positions.append(closest_star)
     return final_star_positions
 
-def find_flare_stars():
+def find_flare_stars(image):
     # go inside path./lit_friends/* and go through all pictures in that folder
     # and match with one screenshot of the screen
     # return a list of unique positions (50px) of all results
     results = []
     for picture in os.listdir(path+'lit_friends'):
         # temp screenshot 
-        pyautogui.screenshot('temp.png')
+        screenshot = cv2.imread(image)
         try:
             region = pick_region((190, 160, 1691, 948), (250, 200, 2300, 1360))
-            positions = list(pyautogui.locateAll(needleImage=(path+'lit_friends/'+picture), haystackImage='./temp.png', grayscale=1, region=region, confidence=.9))
-            for position in positions:
-                x, y = pyautogui.center(position)
+            haystack = screenshot[region[1]:region[3], region[0]:region[2]]
+            needle = cv2.imread(path+'lit_friends/'+picture, cv2.IMREAD_GRAYSCALE)
+            result = cv2.matchTemplate(haystack, needle, cv2.TM_CCOEFF_NORMED)
+            threshold = 0.1
+            loc = np.where(result >= threshold)
+            for pt in zip(*loc[::-1]):
+                x, y = pt[0] + needle.shape[1] // 2, pt[1] + needle.shape[0] // 2
                 results.append((x, y))
         except:
             pass
         # delete temp screenshot
-        os.remove('temp.png')
     
     return make_unique_list(results, pixel_distance=50)
 
-def confidences():
+
+def confidences(image):
     for i in range(4, 10):
         conf = i/100 + .9
         for picture in os.listdir(path+'lit_friends'):
             # temp screenshot 
-            pyautogui.screenshot('temp.png')
+            pyautogui.screenshot(image)
             length = []
             region = pick_region((190, 160, 1691, 948), (250, 200, 2300, 1360))
-            positions = list(pyautogui.locateAll(needleImage=(path+'lit_friends/'+picture), haystackImage='./temp.png', grayscale=1, region=region, confidence=conf))
+            positions = list(pyautogui.locateAll(needleImage=(path+'lit_friends/'+picture), haystackImage=image, grayscale=1, region=region, confidence=conf))
             for position in positions:
                 x, y = pyautogui.center(position)
                 length.append((x, y))
             print(str(len(length)) + ' found with confidence ' + str(conf))
 
+def draw_flare_stars(image_file):
+        flare_positions = find_flare_stars(image_file)
+        image = cv2.imread(image_file)
+        for position in flare_positions:
+            x, y = position
+            cv2.rectangle(image, (x-10, y-10), (x+10, y+10), (255, 171, 10), 2)
+        print("Found", len(flare_positions), "flare stars")
+        # cv2.imshow("Flare Stars", image)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
+
 if __name__ == '__main__':
     time.sleep(.5)
-    timer()
+    draw_flare_stars('image2.png')
