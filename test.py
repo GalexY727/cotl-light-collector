@@ -8,8 +8,8 @@ from ahk import AHK
 
 ahk = AHK()
 
-page_transition_time = 0.92
-confidence = 0.9
+page_transition_time = 1.3
+confidence = 0.8
 
 total_pages = 10
 current_page = 0
@@ -23,6 +23,11 @@ path = './media/zenbook/' if using_zenbook else './media/desktop/'
 
 def pick_region(region1, region2):
     return region1 if not using_zenbook else region2
+
+def cv_pick_region(region1, region2):
+    desired_region = region1 if not using_zenbook else region2
+    return (desired_region[0], desired_region[1], desired_region[0]+desired_region[2], desired_region[1]+desired_region[3])
+
 
 def timer():
     start_time = time.time()
@@ -62,7 +67,21 @@ def make_unique_list(list, pixel_distance=3):
             unique_list.append(item)
     return unique_list
 
+def find_all(image, haystackPath=None):
+    region = pick_region((190, 120, 1510, 948), (250, 200, 2300, 1360))
+    try:
+        if haystackPath is None:
+            pyautogui.moveTo(500, 0)
+            return list(pyautogui.locateAllOnScreen(path+image+'.png', grayscale=1, region=region, confidence=.9))
+        else:
+            return list(pyautogui.locateAll(needleImage=path+image+'.png', haystackImage=haystackPath, grayscale=1, region=region, confidence=.9))
+    except:
+        return []
+
 def cv_find_all(needlePath, haystackPath='./cache/cv_find_all_cache.png', confidence=.8):
+    region = cv_pick_region((190, 120, 1510, 948), (250, 200, 2300, 1360))
+    # move mouse out of the way
+    pyautogui.moveTo(500, 0)
     # check if the needle is a real file
     try:
         os.read(needlePath)
@@ -83,7 +102,7 @@ def cv_find_all(needlePath, haystackPath='./cache/cv_find_all_cache.png', confid
         except:
             haystackImage = cv2.imread(path+haystackPath+'.png')
 
-    result = cv2.matchTemplate(haystackImage, needleImage, method=cv2.TM_CCOEFF_NORMED)
+    result = cv2.matchTemplate(haystackImage[region[1]:region[3], region[0]:region[2]], needleImage, method=cv2.TM_CCOEFF_NORMED)
     # Invert the array since its [y,y,y,y][x,x,x,x] and we want [x,y][x,y] (literally why is it like that)
     # but first we have to make it [x,x,x,x][y,y,y,y] so we invert it
     locations = np.where(result >= confidence)[::-1]
@@ -92,18 +111,16 @@ def cv_find_all(needlePath, haystackPath='./cache/cv_find_all_cache.png', confid
     friendlyArray = list(zip(*locations))
     # there are a lot of occuances that appear on top of eachother, this eliminates that
     friendlyArray = make_unique_list(friendlyArray, pixel_distance=needleImage.shape[0])
-    friendlyArray = list((item[0] + needleImage.shape[0]//2, item[1] + needleImage.shape[0]//2) for item in friendlyArray)
+    friendlyArray = list((item[0] + needleImage.shape[0]//2 + region[0], item[1] + needleImage.shape[0]//2 + region[1]) for item in friendlyArray)
     return friendlyArray
     
 def find_flare_stars(testImagePath=None):
-    # Look for stars, then look for a group of 2 or more flares within 100 px of the star's center
-    lit_star_locations = cv_find_all('unlit_friend', testImagePath)
-    print("Found lit stars:", len(lit_star_locations))
+    lit_star_locations = cv_find_all('lit_friend', testImagePath)
+    unlit_star_locations = cv_find_all('unlit_friend', testImagePath)
     flare_positions = cv_find_all('flare', testImagePath)
-    print("Found flares:", len(flare_positions))
 
     flared_star_positions = []
-    for star in lit_star_locations:
+    for star in lit_star_locations + unlit_star_locations:
         star_x, star_y = star[0], star[1]
         flare_group = []
         for flare in flare_positions:
@@ -113,7 +130,35 @@ def find_flare_stars(testImagePath=None):
                 flare_group.append(flare)
         if len(flare_group) > 1:
             flared_star_positions.append((star_x, star_y))
+    
+    # Perform histogram analysis on flared star positions
+    flared_star_positions = perform_histogram_analysis(flared_star_positions, testImagePath)
+    
     return flared_star_positions
+
+def perform_histogram_analysis(flared_star_positions, testImagePath):
+    # Load the test image
+    testImage = cv2.imread(testImagePath)
+    
+    # Convert the image to grayscale
+    grayImage = cv2.cvtColor(testImage, cv2.COLOR_BGR2GRAY)
+    
+    # Calculate the histogram of the grayscale image
+    hist = cv2.calcHist([grayImage], [0], None, [256], [0, 256])
+    
+    # Find the peak values in the histogram
+    peaks, _ = find_peaks(hist.flatten(), distance=10)
+    
+    # Filter the flared star positions based on the peak values
+    filtered_positions = []
+    for star in flared_star_positions:
+        star_x, star_y = star[0], star[1]
+        pixel_value = grayImage[star_y, star_x]
+        if pixel_value in peaks:
+            filtered_positions.append((star_x, star_y))
+    
+    return filtered_positions
+
 
 def loop():
     global current_page, total_pages
@@ -128,18 +173,19 @@ def loop():
                     cv2.circle(testImage, (int(star[0]), int(star[1])), 40, (255, 0, 255), 5)
             # move mouse out of way becuase we were clicking
             pyautogui.moveTo(500, 0)
-            friends = cv_find_all('unlit_friend', haystackPath=testImagePath)
+            friends = find_all('unlit_friend', haystackPath=testImagePath)
             for friend in friends:
-                cv2.circle(testImage, (int(friend[0]), int(friend[1])), 12, (0, 255, 0), 2)
+                x, y = pyautogui.center(friend)
+                cv2.circle(testImage, (x, y), 12, (0, 255, 0), 2)
             break
         key = 'c'
         ahk.key_down(key)
         time.sleep(.1)
         ahk.key_up(key)
+        cv2.imwrite(testImagePath, testImage)
         time.sleep(page_transition_time)
         pyautogui.moveTo(501, 0)
         current_page += 1
-        cv2.imwrite(testImagePath, testImage)
 
 if __name__ == '__main__':
     time.sleep(.5)

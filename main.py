@@ -9,7 +9,7 @@ import os
 
 ahk = AHK()
 
-page_transition_time = 0.86
+page_transition_time = 1.3
 confidence = 0.9
 
 total_pages = -1
@@ -117,16 +117,20 @@ def get_total_pages():
         print("No offline")
     return len(make_unique_list(list(pages_online) + list(pages_offline)))
 
-def find_all(image):
-    pyautogui.moveTo(500, 0)
+def find_all(image, haystackPath=None):
+    region = pick_region((190, 120, 1510, 948), (250, 200, 2300, 1360))
     try:
-        region = pick_region((190, 160, 1691, 948), (250, 200, 2300, 1360))
-        return list(pyautogui.locateAllOnScreen(path+image+'.png', grayscale=1, region=region, confidence=confidence))
+        if haystackPath is None:
+            pyautogui.moveTo(500, 0)
+            width = cv2.imread(path+image+'.png').shape[1]
+            return make_unique_list(list(pyautogui.locateAllOnScreen(path+image+'.png', grayscale=1, region=region, confidence=confidence)), pixel_distance=width)
+        else:
+            return make_unique_list(list(pyautogui.locateAll(needleImage=path+image+'.png', haystackImage=haystackPath, grayscale=1, region=region, confidence=confidence)), pixel_distance=width)
     except:
         return []
     
 def cv_find_all(needlePath, haystackPath='./cache/cv_find_all_cache.png', confidence=.8):
-    region = cv_pick_region((190, 160, 1691, 948), (250, 200, 2300, 1360))
+    region = cv_pick_region((190, 120, 1510, 948), (250, 200, 2300, 1360))
     # move mouse out of the way
     pyautogui.moveTo(500, 0)
     # check if the needle is a real file
@@ -158,7 +162,7 @@ def cv_find_all(needlePath, haystackPath='./cache/cv_find_all_cache.png', confid
     friendlyArray = list(zip(*locations))
     # there are a lot of occuances that appear on top of eachother, this eliminates that
     friendlyArray = make_unique_list(friendlyArray, pixel_distance=needleImage.shape[0])
-    friendlyArray = list((item[0] + needleImage.shape[0]//2, item[1] + needleImage.shape[0]//2) for item in friendlyArray)
+    friendlyArray = list((item[0] + needleImage.shape[0]//2 + region[0], item[1] + needleImage.shape[0]//2 + region[1]) for item in friendlyArray)
     return friendlyArray
     
 def find_flare_stars(testImagePath=None):
@@ -228,20 +232,27 @@ def light_friend(x, y):
 def loop():
     global current_page, light_collected
     while current_page <= total_pages:
+        testImagePath = './cache/' + str(current_page) + '.png'
+        pyautogui.screenshot(testImagePath)
+        testImage = cv2.imread(testImagePath)
         # this loop helps double check missed friends
+        for i in range(2):
+            for star in find_flare_stars():
+                pyautogui.click(star)
+                light_collected += 1
+                cv2.circle(testImage, (int(star[0]), int(star[1])), 40, (255, 0, 255), 5)
         while True:
-            for i in range(2):
-                for star in find_flare_stars():
-                    pyautogui.click(star)
-                    light_collected += 1
             # move mouse out of way becuase we were clicking
             pyautogui.moveTo(500, 0)
-            friends = cv_find_all('unlit_friend')
+            friends = find_all('unlit_friend')
             for friend in friends:
-                light_friend(friend[0], friend[1])
+                x, y = pyautogui.center(friend)
+                cv2.circle(testImage, (x, y), 12, (0, 255, 0), 2)
+                light_friend(x, y)
             if len(friends) == 0:
                 break
         press_key('c')
+        cv2.imwrite(testImagePath, testImage)
         time.sleep(page_transition_time)
         pyautogui.moveTo(501, 0)
         current_page += 1
