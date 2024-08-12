@@ -37,6 +37,10 @@ def press_key(key):
     except:
         print("Esc not found")
         return 0
+    
+def doubleClick(x, y):
+    ahk.click(x, y)
+    ahk.click(x, y)
 
 def attempt_reentry():
     try:
@@ -122,8 +126,7 @@ def cv_find_all(needlePath, haystackPath='./cache/cv_find_all_cache.png', confid
     try:
         needleImage = cv2.imread(needlePath)
     except:
-        needleImage = path+needlePath+'.png'
-        needleImage = cv2.imread(needlePath)
+        needleImage = cv2.imread(path+needlePath+'.png')
 
     # check if the haystack is a real file
     if haystackPath is './cache/cv_find_all_cache.png':
@@ -136,8 +139,13 @@ def cv_find_all(needlePath, haystackPath='./cache/cv_find_all_cache.png', confid
             haystackImage = cv2.imread(path+haystackPath+'.png')
 
     result = cv2.matchTemplate(haystackImage, needleImage, method=cv2.TM_CCOEFF_NORMED)
+    # Invert the array since its [y,y,y,y][x,x,x,x] and we want [x,y][x,y] (literally why is it like that)
+    # but first we have to make it [x,x,x,x][y,y,y,y] so we invert it
     locations = np.where(result >= confidence)[::-1]
+    # zip is like a zipper, it takes two lists and combines them into a list of tuples
+    # so if we have [1,2,3] and [4,5,6] we get [(1,4), (2,5), (3,6)]
     friendlyArray = list(zip(*locations))
+    # there are a lot of occuances that appear on top of eachother, this eliminates that
     friendlyArray = make_unique_list(friendlyArray, pixel_distance=needleImage.shape[0])
     
     return (friendlyArray, haystackImage)
@@ -186,37 +194,29 @@ def wait_for_candle(duration):
         if duration-(time.time() - start_time) < 0.24:
             time.sleep(duration-(time.time() - start_time))
         try:
-            region = pick_region((0,0,0,0), (840, 0, 1087, 1800))
+            region = pick_region((500,0,784,1080), (840, 0, 1087, 1800))
             pyautogui.locateOnScreen(path+'candle.png', grayscale=1, region=region, confidence=.6)
-            time.sleep(.1)
+            time.sleep(.05)
             return 1
         except:
             pass
     return 0
 
 def light_friend(x, y):
-    pyautogui.click(x, y)
-    
-    time.sleep(.3)
+    doubleClick(x, y)
 
     skip = 0
+    
+    # Let's make sure we didn't misclick
     try:
-        region = pick_region((1540, 1025, 30, 30), (2192, 1701, 60, 60))
-        q_position = pyautogui.locateOnScreen(path+'q_info.png', grayscale=1, region=region, confidence=confidence)
-        # we still arent in the UI-- we need to click again
-        pyautogui.click(x, y)
-        pyautogui.moveTo(q_position)
-        time.sleep(.2)
+        region = pick_region((500,0,784,1080), (840, 0, 1087, 1800))
+        skip = pyautogui.locateOnScreen(path+'candle.png', region=region, grayscale=1, confidence=0.6)
     except:
-        # We couldn't find the info page, so let's make sure we didn't misclick
         try:
-            skip = pyautogui.locateOnScreen(path+'candle.png', grayscale=1, confidence=0.6)
+            pyautogui.locateOnScreen(path+'esc.png', grayscale=1, confidence=0.6)
         except:
-            try:
-                pyautogui.locateOnScreen(path+'esc.png', grayscale=1, confidence=0.6)
-            except:
-                enter_ui()
-                return
+            enter_ui()
+            return
     if not skip:
         wait_for_candle(.9)
     

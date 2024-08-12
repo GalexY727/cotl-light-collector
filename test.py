@@ -62,105 +62,68 @@ def make_unique_list(list, pixel_distance=3):
             unique_list.append(item)
     return unique_list
 
-def find_all(image):
-    pyautogui.moveTo(500, 0)
+def cv_find_all(needlePath, haystackPath='./cache/cv_find_all_cache.png', confidence=.8):
+    # check if the needle is a real file
     try:
-        region = pick_region((190, 160, 1691, 948), (250, 200, 2300, 1360))
-        return list(pyautogui.locateAllOnScreen(path+image+'.png', grayscale=1, region=region, confidence=confidence))
+        os.read(needlePath)
+        cv2.imread(needlePath)
     except:
-        return []
-    
-def find_all_cv(needle, haystack, threshold=0.9):
-    result = cv2.matchTemplate(haystack, path+needle+'.png', cv2.TM_CCOEFF_NORMED)
-    loc = np.where(result >= threshold)
-    return list(zip(*loc[::-1]))
+        needleImage = cv2.imread(path+needlePath+'.png')
 
-
-def get_flare_stars(image):
-    positions = make_unique_list(find_all_cv('flare', image), pixel_distance=10)
-    star_positions = []
-    # find groupings of flares that are within 100 px of each other
-    # a group of 3 or more is a star
-    # get the center of the star and add that position to a list
-    for position in positions:
-        x, y = position
-        flare_group = []
-        for otro_star in positions:
-            x2, y2 = otro_star
-            hypot = ((x - x2)**2 + (y - y2)**2)**.5
-            if hypot < 120:
-                flare_group.append(otro_star)
-        if len(flare_group) > 1:
-            centerpoint = (0, 0)
-            for flare_pos in flare_group:
-                centerpoint = (centerpoint[0] + flare_pos[0], centerpoint[1] + flare_pos[1])
-            centerpoint = (centerpoint[0] / len(flare_group), centerpoint[1] / len(flare_group))
-            star_positions.append(centerpoint)
-    flare_centers = make_unique_list(star_positions, pixel_distance=20)
-    lit_star_locations = make_unique_list(find_all('lit_friend'), pixel_distance=10)
-    final_star_positions = []
-    for star in flare_centers:
-        # find closest lit star to this star
-        closest = 200
-        closest_star = None
-        for lit_star in lit_star_locations:
-            distance = ((star[0] - lit_star[0])**2 + (star[1] - lit_star[1])**2)**.5
-            if distance < closest:
-                closest = distance
-                closest_star = lit_star
-        final_star_positions.append(closest_star)
-    return final_star_positions
-
-def find_flare_stars(image):
-    # go inside path./lit_friends/* and go through all pictures in that folder
-    # and match with one screenshot of the screen
-    # return a list of unique positions (50px) of all results
-    results = []
-    for picture in os.listdir(path+'lit_friends'):
-        # temp screenshot 
-        screenshot = cv2.imread(image)
+    # check if the haystack is a real file
+    if haystackPath == './cache/cv_find_all_cache.png':
+        # take temporary screenshot and assign it to haystack
+        haystackImage = pyautogui.screenshot(haystackPath)
+    else:
         try:
-            region = pick_region((190, 160, 1691, 948), (250, 200, 2300, 1360))
-            haystack = screenshot[region[1]:region[3], region[0]:region[2]]
-            needle = cv2.imread(path+'lit_friends/'+picture, cv2.IMREAD_GRAYSCALE)
-            result = cv2.matchTemplate(haystack, needle, cv2.TM_CCOEFF_NORMED)
-            threshold = 0.1
-            loc = np.where(result >= threshold)
-            for pt in zip(*loc[::-1]):
-                x, y = pt[0] + needle.shape[1] // 2, pt[1] + needle.shape[0] // 2
-                results.append((x, y))
+            haystackImage = cv2.imread(haystackPath)
         except:
-            pass
-        # delete temp screenshot
+            haystackImage = cv2.imread(path+haystackPath+'.png')
+
+    result = cv2.matchTemplate(haystackImage, needleImage, method=cv2.TM_CCOEFF_NORMED)
+    # Invert the array since its [y,y,y,y][x,x,x,x] and we want [x,y][x,y] (literally why is it like that)
+    # but first we have to make it [x,x,x,x][y,y,y,y] so we invert it
+    locations = np.where(result >= confidence)[::-1]
+    # zip is like a zipper, it takes two lists and combines them into a list of tuples
+    # so if we have [1,2,3] and [4,5,6] we get [(1,4), (2,5), (3,6)]
+    friendlyArray = list(zip(*locations))
+    # there are a lot of occuances that appear on top of eachother, this eliminates that
+    friendlyArray = make_unique_list(friendlyArray, pixel_distance=needleImage.shape[0])
+    friendlyArray = list((item[0] + needleImage.shape[0]//2, item[1] + needleImage.shape[0]//2) for item in friendlyArray)
+    return friendlyArray
     
-    return make_unique_list(results, pixel_distance=50)
+def find_flare_stars(testImagePath):
+    # Look for stars, then look for a group of 2 or more flares within 100 px of the star's center
+    lit_star_locations = cv_find_all('lit_friend', testImagePath)
+    print("Found lit stars:", len(lit_star_locations))
+    flare_positions = cv_find_all('flare', testImagePath)
+    print("Found flares:", len(flare_positions))
 
-
-def confidences(image):
-    for i in range(4, 10):
-        conf = i/100 + .9
-        for picture in os.listdir(path+'lit_friends'):
-            # temp screenshot 
-            pyautogui.screenshot(image)
-            length = []
-            region = pick_region((190, 160, 1691, 948), (250, 200, 2300, 1360))
-            positions = list(pyautogui.locateAll(needleImage=(path+'lit_friends/'+picture), haystackImage=image, grayscale=1, region=region, confidence=conf))
-            for position in positions:
-                x, y = pyautogui.center(position)
-                length.append((x, y))
-            print(str(len(length)) + ' found with confidence ' + str(conf))
-
-def draw_flare_stars(image_file):
-        flare_positions = find_flare_stars(image_file)
-        image = cv2.imread(image_file)
-        for position in flare_positions:
-            x, y = position
-            cv2.rectangle(image, (x-10, y-10), (x+10, y+10), (255, 171, 10), 2)
-        print("Found", len(flare_positions), "flare stars")
-        # cv2.imshow("Flare Stars", image)
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
+    flared_star_positions = []
+    for star in lit_star_locations:
+        star_x, star_y = star[0], star[1]
+        flare_group = []
+        for flare in flare_positions:
+            flare_x, flare_y = flare[0], flare[1]
+            hypot = ((star_x - flare_x)**2 + (star_y - flare_y)**2)**.5
+            if hypot < 120:
+                flare_group.append(flare)
+        if len(flare_group) > 1:
+            flared_star_positions.append((star_x, star_y))
+    return flared_star_positions
 
 if __name__ == '__main__':
     time.sleep(.5)
-    draw_flare_stars('image2.png')
+    testImagePath = 'image1.png'
+    testImage = cv2.imread(testImagePath)
+    flared_positions = find_flare_stars(testImagePath)
+    for star in flared_positions:
+        cv2.circle(testImage, (int(star[0]), int(star[1])), 40, (255, 0, 255), 4)
+
+    for pos in cv_find_all('lit_friend', testImagePath):
+        cv2.circle(testImage, (int(pos[0]), int(pos[1])), 15, (0, 255, 0), 4)
+
+    for pos in cv_find_all('flare', testImagePath):
+        cv2.circle(testImage, (int(pos[0]), int(pos[1])), 7, (255, 255, 0), 2)
+
+    cv2.imwrite('matches_output.png', testImage)
