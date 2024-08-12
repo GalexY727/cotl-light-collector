@@ -3,6 +3,9 @@ import pyautogui
 import keyboard
 from ahk import AHK
 import time
+import cv2
+import numpy as np
+import os
 
 ahk = AHK()
 
@@ -114,8 +117,33 @@ def find_all(image):
     except:
         return []
     
+def cv_find_all(needlePath, haystackPath='./cache/cv_find_all_cache.png', confidence=.8, color=(0, 255, 0)):
+    # check if the needle is a real file
+    try:
+        needleImage = cv2.imread(needlePath)
+    except:
+        needleImage = path+needlePath+'.png'
+        needleImage = cv2.imread(needlePath)
+
+    # check if the haystack is a real file
+    if haystackPath is './cache/cv_find_all_cache.png':
+        # take temporary screenshot and assign it to haystack
+        haystackImage = pyautogui.screenshot(haystackPath)
+    else:
+        try:
+            haystackImage = cv2.imread(haystackPath)
+        except:
+            haystackImage = cv2.imread(path+haystackPath+'.png')
+
+    result = cv2.matchTemplate(haystackImage, needleImage, method=cv2.TM_CCOEFF_NORMED)
+    locations = np.where(result >= confidence)[::-1]
+    friendlyArray = list(zip(*locations))
+    friendlyArray = make_unique_list(friendlyArray, pixel_distance=needleImage.shape[0])
+    
+    return (friendlyArray, haystackImage)
+    
 def get_flare_stars():
-    positions = make_unique_list(find_all('flare'), pixel_distance=10)
+    positions = make_unique_list(cv_find_all('flare'), pixel_distance=10)
     star_positions = []
     # find groupings of flares that are within 100 px of eachother
     # a group of 3 or more is a star
