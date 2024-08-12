@@ -11,58 +11,87 @@ def capture_screenshot():
         screenshot = sct.grab(monitor)
         mss.tools.to_png(screenshot.rgb, screenshot.size, output=output)
         return cv2.imread(output)
-
-star_size = 63
-particle_size = 9
-star_threshold = 200
-particle_threshold = 150
-
+    
 def detect_stars(image):
     global star_size, particle_size, star_threshold, particle_threshold
-    
+
+    # Convert image to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    
-    # Detect potential stars
+
+    # Calculate histogram
+    hist = cv2.calcHist([gray], [0], None, [256], [0, 256])
+
+    # Find peak values in histogram
+    peaks, _ = find_peaks(hist.flatten(), distance=10, prominence=100)
+
+    # Sort peaks in descending order
+    sorted_peaks = sorted(peaks, key=lambda x: hist[x], reverse=True)
+
+    # Find star threshold
+    star_threshold = sorted_peaks[0]
+
+    # Find particle threshold
+    particle_threshold = sorted_peaks[1]
+
+    # Threshold image to find stars
     _, binary = cv2.threshold(gray, star_threshold, 255, cv2.THRESH_BINARY)
-    contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    
+
+    # Find connected components
+    num_labels, labels, stats, _ = cv2.connectedComponentsWithStats(binary, connectivity=8)
+
+    # Filter out small components
+    filtered_labels = []
+    for label in range(1, num_labels):
+        area = stats[label, cv2.CC_STAT_AREA]
+        if area >= star_size:
+            filtered_labels.append(label)
+
+    # Find stars with particles and stars without particles
     stars_with_particles = []
     stars_without_particles = []
-    
-    for contour in contours:
-        x, y, w, h = cv2.boundingRect(contour)
-        
-        # Check if the contour size is close to the expected star size
+    for label in filtered_labels:
+        x, y, w, h = stats[label, cv2.CC_STAT_LEFT], stats[label, cv2.CC_STAT_TOP], stats[label, cv2.CC_STAT_WIDTH], stats[label, cv2.CC_STAT_HEIGHT]
+
+        # Check if the component size is close to the expected star size
         if abs(w - star_size) <= 5 and abs(h - star_size) <= 5:
             # Check for particles in the surrounding area
             surrounding_area = gray[max(0, y-20):min(gray.shape[0], y+h+20),
                                     max(0, x-20):min(gray.shape[1], x+w+20)]
-            
+
             _, particle_binary = cv2.threshold(surrounding_area, particle_threshold, 255, cv2.THRESH_BINARY)
-            particle_contours, _ = cv2.findContours(particle_binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-            
+
+            # Find connected components in the surrounding area
+            num_particle_labels, particle_labels, particle_stats, _ = cv2.connectedComponentsWithStats(particle_binary, connectivity=8)
+
+            # Filter out small particle components
+            filtered_particle_labels = []
+            for particle_label in range(1, num_particle_labels):
+                particle_area = particle_stats[particle_label, cv2.CC_STAT_AREA]
+                if particle_area <= particle_size:
+                    filtered_particle_labels.append(particle_label)
+
+            # Check if there are particles near the edge
             has_particles = False
-            for particle_contour in particle_contours:
-                px, py, pw, ph = cv2.boundingRect(particle_contour)
-                if (pw <= particle_size and ph <= particle_size and 
-                    (px < 10 or px > w-10 or py < 10 or py > h-10)):  # Ensure particle is near the edge
+            for particle_label in filtered_particle_labels:
+                px, py, pw, ph = particle_stats[particle_label, cv2.CC_STAT_LEFT], particle_stats[particle_label, cv2.CC_STAT_TOP], particle_stats[particle_label, cv2.CC_STAT_WIDTH], particle_stats[particle_label, cv2.CC_STAT_HEIGHT]
+                if px < 10 or px > w-10 or py < 10 or py > h-10:
                     has_particles = True
                     break
-            
+
             if has_particles:
                 stars_with_particles.append((x, y, w, h))
             else:
                 stars_without_particles.append((x, y, w, h))
-    
+
     # Draw rectangles
     for x, y, w, h in stars_with_particles:
         cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)  # Green for stars with particles
-    
+
     for x, y, w, h in stars_without_particles:
         cv2.rectangle(image, (x, y), (x+w, y+h), (0, 0, 255), 2)  # Red for stars without particles
-    
-    return image, len(stars_with_particles), len(stars_without_particles)
 
+    return image, len(stars_with_particles), len(stars_without_particles)
+    
 def test_on_image(image_path):
     image = cv2.imread(image_path)
     result_image, with_particles, without_particles = detect_stars(image)
@@ -102,7 +131,6 @@ def main():
         if attempts == max_attempts:
             print("Tests failed after maximum attempts. Unable to find suitable parameters.")
     return
-    
     # If tests pass, run on live screenshot
     screenshot = capture_screenshot()
     result_image, stars_with_particles, stars_without_particles = detect_stars(screenshot)
