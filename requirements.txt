@@ -1,0 +1,8 @@
+ahk==1.7.8
+keyboard==0.13.5
+mss==9.0.1
+mss==1.0.2
+numpy==2.0.1
+opencv_python==4.10.0.84
+Pillow==10.4.0
+PyAutoGUI==0.9.54
