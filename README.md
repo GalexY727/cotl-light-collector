@@ -13,7 +13,7 @@ https://github.com/GalexY727/cotl-light-collector/assets/65139378/c70b7156-dc7f-
 
 There are two options to run this program:
 ### 1: Running the executable:
-Launch the .exe inside of ./dist/, and you should be good to go!
+Launch the .exe inside of `./dist/`, and you should be good to go!
 ### 2: Running from source: (needs python)
 ```
 git clone <repository>
