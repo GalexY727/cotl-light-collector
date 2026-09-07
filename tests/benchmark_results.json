@@ -1,0 +1,153 @@
+{
+  "date": "2026-09-07",
+  "python": "3.14.2",
+  "platform": "Windows x64",
+  "repeats": 3,
+  "note": "Sequential local runs; timings include matching/NMS, exclude screenshot I/O. Hardware load can affect results.",
+  "runs": [
+    {
+      "opencv": "4.13.0",
+      "numpy": "2.4.4",
+      "frames": {
+        "image1.png": {
+          "seconds": [
+            11.768465700006345,
+            13.081059000003734,
+            13.89172869999311
+          ],
+          "median_seconds": 13.081059000003734,
+          "counts": {
+            "lit_friend": 13,
+            "unlit_friend": 0,
+            "flare": 67
+          },
+          "boxes_and_scores_identical_to_baseline": true
+        },
+        "image5.png": {
+          "seconds": [
+            4.34540210000705,
+            4.707853400002932,
+            5.535521800004062
+          ],
+          "median_seconds": 4.707853400002932,
+          "counts": {
+            "lit_friend": 13,
+            "unlit_friend": 5,
+            "flare": 46
+          },
+          "boxes_and_scores_identical_to_baseline": true
+        },
+        "cache/0.png": {
+          "seconds": [
+            5.020241200007149,
+            6.102691700012656,
+            7.974352500008536
+          ],
+          "median_seconds": 6.102691700012656,
+          "counts": {
+            "lit_friend": 10,
+            "unlit_friend": 0,
+            "flare": 0
+          },
+          "boxes_and_scores_identical_to_baseline": true
+        }
+      }
+    },
+    {
+      "opencv": "5.0.0",
+      "numpy": "2.4.4",
+      "frames": {
+        "image1.png": {
+          "seconds": [
+            8.655685699995956,
+            11.97579619998578,
+            9.0354445999983
+          ],
+          "median_seconds": 9.0354445999983,
+          "counts": {
+            "lit_friend": 13,
+            "unlit_friend": 0,
+            "flare": 67
+          },
+          "boxes_and_scores_identical_to_baseline": true
+        },
+        "image5.png": {
+          "seconds": [
+            3.6549067000014475,
+            3.2825780999992276,
+            2.434215100001893
+          ],
+          "median_seconds": 3.2825780999992276,
+          "counts": {
+            "lit_friend": 13,
+            "unlit_friend": 5,
+            "flare": 46
+          },
+          "boxes_and_scores_identical_to_baseline": true
+        },
+        "cache/0.png": {
+          "seconds": [
+            2.4795854999974836,
+            3.0042155999981333,
+            3.6083405000099447
+          ],
+          "median_seconds": 3.0042155999981333,
+          "counts": {
+            "lit_friend": 10,
+            "unlit_friend": 0,
+            "flare": 0
+          },
+          "boxes_and_scores_identical_to_baseline": true
+        }
+      }
+    },
+    {
+      "opencv": "5.0.0",
+      "numpy": "2.5.3",
+      "frames": {
+        "image1.png": {
+          "seconds": [
+            9.40391439999803,
+            10.732604300006642,
+            7.949820099995122
+          ],
+          "median_seconds": 9.40391439999803,
+          "counts": {
+            "lit_friend": 13,
+            "unlit_friend": 0,
+            "flare": 67
+          },
+          "boxes_and_scores_identical_to_baseline": true
+        },
+        "image5.png": {
+          "seconds": [
+            2.9370626999880187,
+            2.8662557999923592,
+            2.983656800002791
+          ],
+          "median_seconds": 2.9370626999880187,
+          "counts": {
+            "lit_friend": 13,
+            "unlit_friend": 5,
+            "flare": 46
+          },
+          "boxes_and_scores_identical_to_baseline": true
+        },
+        "cache/0.png": {
+          "seconds": [
+            2.9208483999973396,
+            3.16728680000233,
+            3.211331300000893
+          ],
+          "median_seconds": 3.16728680000233,
+          "counts": {
+            "lit_friend": 10,
+            "unlit_friend": 0,
+            "flare": 0
+          },
+          "boxes_and_scores_identical_to_baseline": true
+        }
+      }
+    }
+  ]
+}

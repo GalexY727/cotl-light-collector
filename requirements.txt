@@ -1,8 +1,9 @@
-ahk==1.7.8
-keyboard==0.13.5
-mss==9.0.1
-mss==1.0.2
-numpy==2.0.1
-opencv_python==4.10.0.84
-Pillow==10.4.0
+# Tested together on 64-bit Python 3.14; Python 3.11+ required by NumPy.
+ahk[binary]==1.8.4
+mss==10.2.0
+numpy==2.4.4
+# OpenCV 5 CPU wheel; GUI build also supports cv.py's imshow.
+opencv-python==5.0.0.93
+Pillow==12.3.0
+# Mouse movement/scrolling and its existing failsafe; no keyboard use.
 PyAutoGUI==0.9.54
