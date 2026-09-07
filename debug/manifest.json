@@ -1,0 +1,733 @@
+{
+  "version": 1,
+  "notes": "No debug directory existed in the supplied checkout. Fixtures copied byte-for-byte from image1..6.png and cache. Ring/cursor occlusion permits explicitly reported abstention on three targets. An abstention is not a correct classification.",
+  "images": {
+    "zero-index.png": {
+      "state": "index",
+      "page_token": [10, 0],
+      "targets": [],
+      "provenance": "User-supplied full constellation index screenshot. The enlarged first dot is the selected leftmost tab."
+    },
+    "image1.png": {
+      "state": "friend_page",
+      "provenance": "Manually inspected original screenshot. Coordinates identify named stars; historical drawn circles are not ground truth.",
+      "targets": [
+        {
+          "name": "Susie",
+          "center": [
+            535,
+            395
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "Kit",
+          "center": [
+            1445,
+            414
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "nyx",
+          "center": [
+            2133,
+            448
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "Didi",
+          "center": [
+            1260,
+            515
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "Rosa",
+          "center": [
+            417,
+            610
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "v",
+          "center": [
+            1844,
+            650
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "Rya",
+          "center": [
+            1207,
+            910
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "Edgar",
+          "center": [
+            1745,
+            1016
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "Moon",
+          "center": [
+            2377,
+            1100
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "Rei",
+          "center": [
+            1094,
+            1125
+          ],
+          "needs_light": false,
+          "collectible": true,
+          "allow_abstain": [
+            "collectible"
+          ]
+        },
+        {
+          "name": "Hannah",
+          "center": [
+            1545,
+            1130
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "Echo",
+          "center": [
+            2305,
+            1387
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "D o Nature",
+          "center": [
+            638,
+            1400
+          ],
+          "needs_light": false,
+          "collectible": true
+        }
+      ],
+      "page_token": [
+        10,
+        7
+      ]
+    },
+    "image2.png": {
+      "state": "friend_page",
+      "provenance": "Manually inspected original screenshot. Coordinates identify named stars; historical drawn circles are not ground truth.",
+      "targets": [
+        {
+          "name": "Lev",
+          "center": [
+            905,
+            394
+          ],
+          "needs_light": false,
+          "collectible": false
+        },
+        {
+          "name": "Usagi",
+          "center": [
+            993,
+            518
+          ],
+          "needs_light": false,
+          "collectible": false
+        },
+        {
+          "name": "Pluto",
+          "center": [
+            1246,
+            681
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "Cyan",
+          "center": [
+            1924,
+            750
+          ],
+          "needs_light": false,
+          "collectible": false
+        },
+        {
+          "name": "lily",
+          "center": [
+            1375,
+            805
+          ],
+          "needs_light": false,
+          "collectible": false
+        },
+        {
+          "name": "Andrea",
+          "center": [
+            1548,
+            970
+          ],
+          "needs_light": false,
+          "collectible": false
+        },
+        {
+          "name": "Sen",
+          "center": [
+            1973,
+            1090
+          ],
+          "needs_light": false,
+          "collectible": false
+        },
+        {
+          "name": "Blu",
+          "center": [
+            1553,
+            1180
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "Ari",
+          "center": [
+            1848,
+            1258
+          ],
+          "needs_light": false,
+          "collectible": false
+        },
+        {
+          "name": "Sensible",
+          "center": [
+            679,
+            1320
+          ],
+          "needs_light": false,
+          "collectible": false
+        }
+      ],
+      "page_token": [
+        10,
+        3
+      ]
+    },
+    "image3.png": {
+      "state": "friend_page",
+      "provenance": "Manually inspected original screenshot. Coordinates identify named stars; historical drawn circles are not ground truth.",
+      "targets": [
+        {
+          "name": "Sash",
+          "center": [
+            955,
+            165
+          ],
+          "needs_light": true,
+          "collectible": true
+        },
+        {
+          "name": "Matcha",
+          "center": [
+            1095,
+            163
+          ],
+          "needs_light": true,
+          "collectible": true
+        },
+        {
+          "name": "Kiwi",
+          "center": [
+            844,
+            251
+          ],
+          "needs_light": true,
+          "collectible": false,
+          "allow_abstain": [
+            "collectible"
+          ]
+        },
+        {
+          "name": "Leah",
+          "center": [
+            1125,
+            332
+          ],
+          "needs_light": true,
+          "collectible": false
+        },
+        {
+          "name": "Queenie",
+          "center": [
+            850,
+            727
+          ],
+          "needs_light": false,
+          "collectible": false
+        },
+        {
+          "name": "Polo",
+          "center": [
+            770,
+            811
+          ],
+          "needs_light": false,
+          "collectible": true,
+          "allow_abstain": [
+            "collectible"
+          ]
+        }
+      ],
+      "page_token": [
+        10,
+        5
+      ]
+    },
+    "image4.png": {
+      "state": "friend_page",
+      "provenance": "Manually inspected original screenshot. Coordinates identify named stars; historical drawn circles are not ground truth.",
+      "targets": [
+        {
+          "name": "Vash",
+          "center": [
+            795,
+            215
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "Andromeda",
+          "center": [
+            1253,
+            237
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "v",
+          "center": [
+            672,
+            284
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "Alfries",
+          "center": [
+            1614,
+            289
+          ],
+          "needs_light": false,
+          "collectible": false
+        },
+        {
+          "name": "Rae",
+          "center": [
+            1059,
+            373
+          ],
+          "needs_light": false,
+          "collectible": false
+        },
+        {
+          "name": "Choette",
+          "center": [
+            1536,
+            430
+          ],
+          "needs_light": false,
+          "collectible": false
+        },
+        {
+          "name": "Mot",
+          "center": [
+            638,
+            545
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "music man",
+          "center": [
+            995,
+            616
+          ],
+          "needs_light": false,
+          "collectible": false
+        },
+        {
+          "name": "Edgar",
+          "center": [
+            564,
+            692
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "Phyr",
+          "center": [
+            864,
+            693
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "Val",
+          "center": [
+            1417,
+            674
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "D o Nature",
+          "center": [
+            1370,
+            864
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "User",
+          "center": [
+            264,
+            872
+          ],
+          "needs_light": false,
+          "collectible": false
+        }
+      ],
+      "page_token": [
+        10,
+        8
+      ]
+    },
+    "image5.png": {
+      "state": "friend_page",
+      "provenance": "Manually inspected original screenshot. Coordinates identify named stars; historical drawn circles are not ground truth.",
+      "targets": [
+        {
+          "name": "Vash",
+          "center": [
+            795,
+            215
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "Andromeda",
+          "center": [
+            1253,
+            237
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "v",
+          "center": [
+            672,
+            284
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "Alfries",
+          "center": [
+            1614,
+            289
+          ],
+          "needs_light": false,
+          "collectible": false
+        },
+        {
+          "name": "Rae",
+          "center": [
+            1059,
+            373
+          ],
+          "needs_light": false,
+          "collectible": false
+        },
+        {
+          "name": "Choette",
+          "center": [
+            1536,
+            430
+          ],
+          "needs_light": false,
+          "collectible": false
+        },
+        {
+          "name": "Mot",
+          "center": [
+            638,
+            545
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "music man",
+          "center": [
+            995,
+            616
+          ],
+          "needs_light": false,
+          "collectible": false
+        },
+        {
+          "name": "Edgar",
+          "center": [
+            564,
+            692
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "Phyr",
+          "center": [
+            864,
+            693
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "Val",
+          "center": [
+            1417,
+            674
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "D o Nature",
+          "center": [
+            1370,
+            864
+          ],
+          "needs_light": false,
+          "collectible": true
+        },
+        {
+          "name": "User",
+          "center": [
+            264,
+            872
+          ],
+          "needs_light": false,
+          "collectible": false
+        }
+      ],
+      "page_token": [
+        10,
+        8
+      ]
+    },
+    "image6.png": {
+      "state": "friend_page",
+      "provenance": "Manually inspected original screenshot. Coordinates identify named stars; historical drawn circles are not ground truth.",
+      "targets": [
+        {
+          "name": "Rya",
+          "center": [
+            550,
+            210
+          ],
+          "needs_light": true,
+          "collectible": true
+        },
+        {
+          "name": "Ru",
+          "center": [
+            1156,
+            213
+          ],
+          "needs_light": true,
+          "collectible": true
+        },
+        {
+          "name": "Arif",
+          "center": [
+            1613,
+            229
+          ],
+          "needs_light": true,
+          "collectible": true
+        },
+        {
+          "name": "Maya",
+          "center": [
+            1036,
+            283
+          ],
+          "needs_light": true,
+          "collectible": true
+        },
+        {
+          "name": "Rei",
+          "center": [
+            473,
+            353
+          ],
+          "needs_light": true,
+          "collectible": true
+        },
+        {
+          "name": "Naomi",
+          "center": [
+            1423,
+            368
+          ],
+          "needs_light": true,
+          "collectible": true
+        },
+        {
+          "name": "Nyx fire trial",
+          "center": [
+            1003,
+            544
+          ],
+          "needs_light": true,
+          "collectible": true
+        },
+        {
+          "name": "Tet",
+          "center": [
+            364,
+            596
+          ],
+          "needs_light": true,
+          "collectible": true
+        },
+        {
+          "name": "Ghosty",
+          "center": [
+            1361,
+            611
+          ],
+          "needs_light": true,
+          "collectible": true
+        },
+        {
+          "name": "nyx",
+          "center": [
+            1229,
+            688
+          ],
+          "needs_light": true,
+          "collectible": false
+        },
+        {
+          "name": "Sheepy",
+          "center": [
+            929,
+            691
+          ],
+          "needs_light": true,
+          "collectible": true
+        },
+        {
+          "name": "Puppy",
+          "center": [
+            325,
+            787
+          ],
+          "needs_light": true,
+          "collectible": true
+        },
+        {
+          "name": "Musta",
+          "center": [
+            626,
+            878
+          ],
+          "needs_light": true,
+          "collectible": true
+        }
+      ],
+      "page_token": [
+        10,
+        6
+      ]
+    },
+    "cache/0.png": {
+      "state": "friend_page",
+      "provenance": "Historical cache, often contains colored diagnostic marks; state-only smoke coverage, no inferred action labels."
+    },
+    "cache/1.png": {
+      "state": "friend_page",
+      "provenance": "Historical cache, often contains colored diagnostic marks; state-only smoke coverage, no inferred action labels."
+    },
+    "cache/2.png": {
+      "state": "friend_page",
+      "provenance": "Historical cache, often contains colored diagnostic marks; state-only smoke coverage, no inferred action labels."
+    },
+    "cache/3.png": {
+      "state": "friend_page",
+      "provenance": "Historical cache, often contains colored diagnostic marks; state-only smoke coverage, no inferred action labels."
+    },
+    "cache/4.png": {
+      "state": "friend_page",
+      "provenance": "Historical cache, often contains colored diagnostic marks; state-only smoke coverage, no inferred action labels."
+    },
+    "cache/5.png": {
+      "state": "friend_page",
+      "provenance": "Historical cache, often contains colored diagnostic marks; state-only smoke coverage, no inferred action labels."
+    },
+    "cache/6.png": {
+      "state": "friend_page",
+      "provenance": "Historical cache, often contains colored diagnostic marks; state-only smoke coverage, no inferred action labels."
+    },
+    "cache/7.png": {
+      "state": "friend_page",
+      "provenance": "Historical cache, often contains colored diagnostic marks; state-only smoke coverage, no inferred action labels."
+    },
+    "cache/8.png": {
+      "state": "friend_page",
+      "provenance": "Historical cache, often contains colored diagnostic marks; state-only smoke coverage, no inferred action labels."
+    },
+    "cache/cv_find_all_cache.png": {
+      "state": "friend_page",
+      "provenance": "Historical cache, often contains colored diagnostic marks; state-only smoke coverage, no inferred action labels."
+    }
+  }
+}
