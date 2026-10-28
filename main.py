@@ -1,9 +1,10 @@
-"""Offline, scale-aware Sky light collector. Run with --debug for raw overlays."""
+"""State-driven Sky friend collector with queued actions and focus protection."""
 from __future__ import annotations
 
 import argparse
 import csv
-from dataclasses import dataclass
+import json
+from dataclasses import asdict, dataclass
 from functools import lru_cache
 from pathlib import Path
 import time
@@ -426,30 +427,120 @@ def loop():
 
 
 def main():
-    global DEBUG, DEBUG_DIR, total_pages
+    global DEBUG, DEBUG_DIR
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--debug', action='store_true', help='Save pre-NMS PNG overlays and CSV scores')
+    parser.add_argument('--debug', action='store_true', help='Save page screenshots and JSON action queues')
     parser.add_argument('--debug-dir', type=Path, default=DEBUG_DIR)
+    parser.add_argument('--game-title', default='Sky', help='Unique game window title substring')
+    parser.add_argument('--scan-only', action='store_true', help='Navigate pages and report actions without interacting with friends')
+    parser.add_argument('--report', type=Path, default=CACHE_DIR / 'scan-report.json', help='Scan-only JSON report path')
     args = parser.parse_args()
     DEBUG, DEBUG_DIR = args.debug, args.debug_dir
-    print('Starting!!')
+    from automation import Controller
+    from safety import WindowsSafety, AutomationPaused
+    from detector import same_page
+    safety = WindowsSafety(args.game_title)
+    print('Focus the game. - or Backspace pauses; = resumes with a fresh scan. Ctrl+C exits.')
     start_time = time.monotonic()
-    time.sleep(1)
+    time.sleep(3)
+    safety.start()
+    totals = [0, 0]
+    scanned_pages, page_ids = [], []
+    report_status = 'incomplete'
+
+    def write_report():
+        if not args.scan_only:
+            return
+        summary = {name: sum(page[name] for page in scanned_pages)
+                   for name in ('friends', 'lighting', 'collecting', 'both', 'actions')}
+        args.report.parent.mkdir(parents=True, exist_ok=True)
+        temporary = args.report.with_name(args.report.name + '.tmp')
+        temporary.write_text(json.dumps({'scan_only': True, 'status': report_status,
+                                        'totals': summary, 'pages': scanned_pages}, indent=2) + '\n')
+        temporary.replace(args.report)
+
     try:
-        capture_and_cache_screen()
-        if not locate('esc'):
-            enter_ui()
-        index_to_start()
-        total_pages = get_total_pages()
-        print(f'Total pages: {total_pages}')
-        press_key('c')
-        time.sleep(page_transition_time)
-        loop()
+        while True:
+            generation = safety.generation
+
+            def guard():
+                safety.check()
+                if generation != safety.generation:
+                    raise AutomationPaused('interaction interrupted; rescan required')
+
+            def guarded_action(function, *values):
+                guard()
+                safety.action(function, *values, generation=generation)
+
+            def guarded_key(key):
+                guard()
+                safety.key(key, generation=generation)
+
+            def guarded_open_friend(x, y):
+                guard()
+                safety.open_friend(x, y, generation=generation)
+
+            def save_plan(observation, actions, elapsed):
+                if args.scan_only and not any(same_page(observation.page, p) for p in page_ids):
+                    page_ids.append(observation.page)
+                    scanned_pages.append({
+                        'page': len(scanned_pages) + 1, 'planning_seconds': elapsed,
+                        'friends': len(observation.friends),
+                        'lighting': sum(f.needs_light for f in observation.friends),
+                        'collecting': sum(f.needs_collect for f in observation.friends),
+                        'both': sum(f.needs_light and f.needs_collect for f in observation.friends),
+                        'actions': len(actions),
+                        'detections': [asdict(f) for f in observation.friends],
+                        'queue': [asdict(a) for a in actions]})
+                    write_report()
+                    page = scanned_pages[-1]
+                    print(f'Scan: {page["lighting"]} need lighting, {page["collecting"]} '
+                          f'need collecting ({page["both"]} need both)')
+                if DEBUG:
+                    DEBUG_DIR.mkdir(parents=True, exist_ok=True)
+                    stem = DEBUG_DIR / f'page_{time.time_ns()}'
+                    cv2.imwrite(str(stem.with_suffix('.png')), cached_screen())
+                    stem.with_suffix('.json').write_text(json.dumps({
+                        'state': observation.state.value, 'planning_seconds': elapsed,
+                        'friends': [asdict(f) for f in observation.friends],
+                        'queue': [asdict(a) for a in actions]}, indent=2))
+
+            controller = Controller(capture_and_cache_screen,
+                                    guarded_key,
+                                    lambda x, y: guarded_action(mouse().click, x, y),
+                                    guarded_open_friend, guard=guard,
+                                    on_plan=save_plan)
+            try:
+                report_status = 'running'
+                write_report()
+                controller.run(scan_only=args.scan_only)
+                totals[0] += controller.lit
+                totals[1] += controller.collected
+                report_status = 'complete'
+                break
+            except AutomationPaused:
+                totals[0] += controller.lit
+                totals[1] += controller.collected
+                safety.release()
+                report_status = 'paused'
+                write_report()
+                while safety.paused.is_set():
+                    if safety.stopped.is_set():
+                        raise RuntimeError(f'Input watchdog stopped: {safety.reason}')
+                    time.sleep(.05)
+                # Discard stale coordinates and queued actions after interruption.
         elapsed_time = time.monotonic() - start_time
-        print(f'Lit {friend_count} friends, and collected {light_collected} light in {int(elapsed_time)} seconds')
+        if args.scan_only:
+            print(f'Scanned {len(scanned_pages)} pages; report: {args.report.resolve()}')
+        else:
+            print(f'Verified {totals[0]} friends lit and {totals[1]} collections in {int(elapsed_time)} seconds')
     finally:
+        if report_status == 'running':
+            report_status = 'incomplete'
+        safety.close()
         if _capture is not None:
             _capture.close()
+        write_report()
 
 
 if __name__ == '__main__':

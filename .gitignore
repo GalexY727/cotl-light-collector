@@ -160,3 +160,7 @@ cython_debug/
 
 # Optional raw detection diagnostics
 cache/debug/
+cache/baseline/
+cache/baseline-replay/
+cache/scan-report.json
+cache/scan-report.json.tmp

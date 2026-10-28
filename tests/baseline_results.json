@@ -1,0 +1,764 @@
+{
+  "passed": true,
+  "images": [
+    {
+      "file": "media\\new\\just_lit_friend.jpg",
+      "state": "friend",
+      "friends": 0,
+      "actions": 0,
+      "lighting": 0,
+      "collecting": 0,
+      "both": 0,
+      "planning_seconds": [
+        0.120613900013268,
+        0.04024830006528646,
+        0.037765099899843335
+      ],
+      "mismatched_slots": []
+    },
+    {
+      "file": "media\\new\\list-mode\\page_0.jpg",
+      "state": "list",
+      "friends": 21,
+      "actions": 14,
+      "lighting": 13,
+      "collecting": 1,
+      "both": 0,
+      "planning_seconds": [
+        0.027411799994297326,
+        0.018494500080123544,
+        0.019673900096677244
+      ],
+      "mismatched_slots": []
+    },
+    {
+      "file": "media\\new\\list-mode\\page_1.jpg",
+      "state": "list",
+      "friends": 21,
+      "actions": 13,
+      "lighting": 9,
+      "collecting": 4,
+      "both": 0,
+      "planning_seconds": [
+        0.020933300023898482,
+        0.01868149999063462,
+        0.017791799968108535
+      ],
+      "mismatched_slots": []
+    },
+    {
+      "file": "media\\new\\list-mode\\page_2.jpg",
+      "state": "list",
+      "friends": 21,
+      "actions": 20,
+      "lighting": 16,
+      "collecting": 4,
+      "both": 0,
+      "planning_seconds": [
+        0.018471600022166967,
+        0.02123119996394962,
+        0.01869159995112568
+      ],
+      "mismatched_slots": []
+    },
+    {
+      "file": "media\\new\\list-mode\\page_3.jpg",
+      "state": "list",
+      "friends": 21,
+      "actions": 17,
+      "lighting": 16,
+      "collecting": 1,
+      "both": 0,
+      "planning_seconds": [
+        0.017155000008642673,
+        0.017640500096604228,
+        0.017654299968853593
+      ],
+      "mismatched_slots": []
+    },
+    {
+      "file": "media\\new\\list-mode\\page_4.jpg",
+      "state": "list",
+      "friends": 21,
+      "actions": 16,
+      "lighting": 15,
+      "collecting": 1,
+      "both": 0,
+      "planning_seconds": [
+        0.01704269996844232,
+        0.017416900023818016,
+        0.01705599995329976
+      ],
+      "mismatched_slots": []
+    },
+    {
+      "file": "media\\new\\list-mode\\page_5.jpg",
+      "state": "list",
+      "friends": 21,
+      "actions": 17,
+      "lighting": 13,
+      "collecting": 4,
+      "both": 0,
+      "planning_seconds": [
+        0.017212799983099103,
+        0.01943710003979504,
+        0.017434899928048253
+      ],
+      "mismatched_slots": []
+    },
+    {
+      "file": "media\\new\\list-mode\\page_6.jpg",
+      "state": "list",
+      "friends": 21,
+      "actions": 18,
+      "lighting": 16,
+      "collecting": 2,
+      "both": 0,
+      "planning_seconds": [
+        0.01959249994251877,
+        0.017416700022295117,
+        0.01961179997306317
+      ],
+      "mismatched_slots": []
+    },
+    {
+      "file": "media\\new\\list-mode\\page_7.jpg",
+      "state": "list",
+      "friends": 18,
+      "actions": 16,
+      "lighting": 13,
+      "collecting": 3,
+      "both": 3,
+      "planning_seconds": [
+        0.018800999969244003,
+        0.018619599984958768,
+        0.016843199962750077
+      ],
+      "mismatched_slots": []
+    },
+    {
+      "file": "media\\new\\need_to_light_friend.jpg",
+      "state": "light_ready",
+      "friends": 0,
+      "actions": 0,
+      "lighting": 0,
+      "collecting": 0,
+      "both": 0,
+      "planning_seconds": [
+        0.04043900000397116,
+        0.04020519996993244,
+        0.03887050005141646
+      ],
+      "mismatched_slots": []
+    },
+    {
+      "file": "media\\new\\not_in_friend_ui.jpg",
+      "state": "world",
+      "friends": 0,
+      "actions": 0,
+      "lighting": 0,
+      "collecting": 0,
+      "both": 0,
+      "planning_seconds": [
+        0.04053780005779117,
+        0.03957319993060082,
+        0.038464699988253415
+      ],
+      "mismatched_slots": []
+    }
+  ],
+  "video_samples": [
+    {
+      "seconds": 0,
+      "state": "unknown",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.038333100033923984
+    },
+    {
+      "seconds": 0.5,
+      "state": "world",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.03952770004980266
+    },
+    {
+      "seconds": 1.0,
+      "state": "world",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.03911839995998889
+    },
+    {
+      "seconds": 1.5,
+      "state": "unknown",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.038363799918442965
+    },
+    {
+      "seconds": 2.0,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.012606700067408383
+    },
+    {
+      "seconds": 2.5,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.00980380002874881
+    },
+    {
+      "seconds": 3.0,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.009483100031502545
+    },
+    {
+      "seconds": 3.5,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.009134900057688355
+    },
+    {
+      "seconds": 4.0,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.00964980002027005
+    },
+    {
+      "seconds": 4.5,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.008671600022353232
+    },
+    {
+      "seconds": 5.0,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.008090600022114813
+    },
+    {
+      "seconds": 5.5,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.0103152000810951
+    },
+    {
+      "seconds": 6.0,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.008983600069768727
+    },
+    {
+      "seconds": 6.5,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.008657699916511774
+    },
+    {
+      "seconds": 7.0,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.008617899962700903
+    },
+    {
+      "seconds": 7.5,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.008323699934408069
+    },
+    {
+      "seconds": 8.0,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.009866500040516257
+    },
+    {
+      "seconds": 8.5,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.011340299970470369
+    },
+    {
+      "seconds": 9.0,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.010067300056107342
+    },
+    {
+      "seconds": 9.5,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.009008099907077849
+    },
+    {
+      "seconds": 10.0,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.0085831000469625
+    },
+    {
+      "seconds": 10.5,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.009705399977974594
+    },
+    {
+      "seconds": 11.0,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.009659199975430965
+    },
+    {
+      "seconds": 11.5,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.010444300016388297
+    },
+    {
+      "seconds": 12.0,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.009113800013437867
+    },
+    {
+      "seconds": 12.5,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.009961100062355399
+    },
+    {
+      "seconds": 13.0,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.009715699939988554
+    },
+    {
+      "seconds": 13.5,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.009100099909119308
+    },
+    {
+      "seconds": 14.0,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.008245800039730966
+    },
+    {
+      "seconds": 14.5,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.009317199932411313
+    },
+    {
+      "seconds": 15.0,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.009297400014474988
+    },
+    {
+      "seconds": 15.5,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.007933199987746775
+    },
+    {
+      "seconds": 16.0,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.009016599971801043
+    },
+    {
+      "seconds": 16.5,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.009190800017677248
+    },
+    {
+      "seconds": 17.0,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.01045109995175153
+    },
+    {
+      "seconds": 17.5,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.009217999991960824
+    },
+    {
+      "seconds": 18.0,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.009658899973146617
+    },
+    {
+      "seconds": 18.5,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.009113600011914968
+    },
+    {
+      "seconds": 19.0,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.008904100046493113
+    },
+    {
+      "seconds": 19.5,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.00898749998304993
+    },
+    {
+      "seconds": 20.0,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.00899909995496273
+    },
+    {
+      "seconds": 20.5,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.00928530003875494
+    },
+    {
+      "seconds": 21.0,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.010069700074382126
+    },
+    {
+      "seconds": 21.5,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.008718099910765886
+    },
+    {
+      "seconds": 22.0,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.01104400004260242
+    },
+    {
+      "seconds": 22.5,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.013899500016123056
+    },
+    {
+      "seconds": 23.0,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.008224899997003376
+    },
+    {
+      "seconds": 23.5,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.009660599986091256
+    },
+    {
+      "seconds": 24.0,
+      "state": "add_friends",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.011990500031970441
+    },
+    {
+      "seconds": 24.5,
+      "state": "add_friends",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.009789899922907352
+    },
+    {
+      "seconds": 25.0,
+      "state": "add_friends",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.008916799910366535
+    },
+    {
+      "seconds": 25.5,
+      "state": "add_friends",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.00952069996856153
+    },
+    {
+      "seconds": 26.0,
+      "state": "unknown",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.040645499946549535
+    },
+    {
+      "seconds": 26.5,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.009065699996426702
+    },
+    {
+      "seconds": 27.0,
+      "state": "constellation",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.0093695999821648
+    },
+    {
+      "seconds": 27.5,
+      "state": "unknown",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.039384800009429455
+    },
+    {
+      "seconds": 28.0,
+      "state": "list",
+      "friends": 21,
+      "actions": 14,
+      "planning_seconds": 0.016595900058746338
+    },
+    {
+      "seconds": 28.5,
+      "state": "list",
+      "friends": 21,
+      "actions": 14,
+      "planning_seconds": 0.016796400072053075
+    },
+    {
+      "seconds": 29.0,
+      "state": "list",
+      "friends": 21,
+      "actions": 14,
+      "planning_seconds": 0.019957899930886924
+    },
+    {
+      "seconds": 29.5,
+      "state": "list",
+      "friends": 21,
+      "actions": 13,
+      "planning_seconds": 0.01651240000501275
+    },
+    {
+      "seconds": 30.0,
+      "state": "list",
+      "friends": 21,
+      "actions": 13,
+      "planning_seconds": 0.016682500019669533
+    },
+    {
+      "seconds": 30.5,
+      "state": "list",
+      "friends": 21,
+      "actions": 13,
+      "planning_seconds": 0.01660849992185831
+    },
+    {
+      "seconds": 31.0,
+      "state": "list",
+      "friends": 21,
+      "actions": 20,
+      "planning_seconds": 0.017694200039841235
+    },
+    {
+      "seconds": 31.5,
+      "state": "list",
+      "friends": 21,
+      "actions": 20,
+      "planning_seconds": 0.017276700004003942
+    },
+    {
+      "seconds": 32.0,
+      "state": "list",
+      "friends": 21,
+      "actions": 20,
+      "planning_seconds": 0.02042090008035302
+    },
+    {
+      "seconds": 32.5,
+      "state": "list",
+      "friends": 21,
+      "actions": 17,
+      "planning_seconds": 0.01672760001383722
+    },
+    {
+      "seconds": 33.0,
+      "state": "list",
+      "friends": 21,
+      "actions": 17,
+      "planning_seconds": 0.015845899935811758
+    },
+    {
+      "seconds": 33.5,
+      "state": "list",
+      "friends": 21,
+      "actions": 16,
+      "planning_seconds": 0.01583549997303635
+    },
+    {
+      "seconds": 34.0,
+      "state": "list",
+      "friends": 21,
+      "actions": 16,
+      "planning_seconds": 0.01537309994455427
+    },
+    {
+      "seconds": 34.5,
+      "state": "list",
+      "friends": 21,
+      "actions": 16,
+      "planning_seconds": 0.015954400063492358
+    },
+    {
+      "seconds": 35.0,
+      "state": "list",
+      "friends": 21,
+      "actions": 17,
+      "planning_seconds": 0.016440400038845837
+    },
+    {
+      "seconds": 35.5,
+      "state": "list",
+      "friends": 21,
+      "actions": 17,
+      "planning_seconds": 0.017162500065751374
+    },
+    {
+      "seconds": 36.0,
+      "state": "list",
+      "friends": 21,
+      "actions": 20,
+      "planning_seconds": 0.01717449992429465
+    },
+    {
+      "seconds": 36.5,
+      "state": "list",
+      "friends": 21,
+      "actions": 17,
+      "planning_seconds": 0.016442100051790476
+    },
+    {
+      "seconds": 37.0,
+      "state": "list",
+      "friends": 21,
+      "actions": 18,
+      "planning_seconds": 0.016431199968792498
+    },
+    {
+      "seconds": 37.5,
+      "state": "unknown",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.040064599947072566
+    },
+    {
+      "seconds": 38.0,
+      "state": "list",
+      "friends": 18,
+      "actions": 16,
+      "planning_seconds": 0.016425599926151335
+    },
+    {
+      "seconds": 38.5,
+      "state": "list",
+      "friends": 18,
+      "actions": 16,
+      "planning_seconds": 0.016522499965503812
+    },
+    {
+      "seconds": 39.0,
+      "state": "list",
+      "friends": 21,
+      "actions": 16,
+      "planning_seconds": 0.01761199999600649
+    },
+    {
+      "seconds": 39.5,
+      "state": "list",
+      "friends": 21,
+      "actions": 14,
+      "planning_seconds": 0.02039429999422282
+    },
+    {
+      "seconds": 40.0,
+      "state": "list",
+      "friends": 21,
+      "actions": 14,
+      "planning_seconds": 0.017800099914893508
+    },
+    {
+      "seconds": 40.5,
+      "state": "unknown",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.03737030003685504
+    },
+    {
+      "seconds": 41.0,
+      "state": "unknown",
+      "friends": 0,
+      "actions": 0,
+      "planning_seconds": 0.03627249994315207
+    }
+  ],
+  "environment": {
+    "python": "3.14.2",
+    "opencv": "5.0.0"
+  },
+  "verification": {
+    "offline_tests_passed": 34,
+    "labeled_friends": 165,
+    "video_action_checkpoints": 11,
+    "live_input_tested": false,
+    "timing_includes": "frame normalization, detection, and queue construction; file/video loading and live capture excluded"
+  }
+}
